@@ -15,7 +15,7 @@ import javax.persistence.*;
 @ToString
 public class Member {
 
-    @Id @Column(name = "memeber_id")
+    @Id @Column(name = "member_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
