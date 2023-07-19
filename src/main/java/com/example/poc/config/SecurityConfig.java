@@ -21,7 +21,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.formLogin()
+        http
+                .csrf().disable()
+                .formLogin()
                 .loginPage("/member/login")     // 로그인 페이지 URL
                 .defaultSuccessUrl("/")         // 성공시 이동할 URL
                 .usernameParameter("email")     // form tag 에서 파라메터
@@ -30,6 +32,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logout()
                 .logoutRequestMatcher(new AntPathRequestMatcher("/member/logout")) // 로그아웃 URL
                 .logoutSuccessUrl("/")          // 로그아웃 성공시 이동할 URL
+        ;
+        http.authorizeRequests().antMatchers("/scale/**").permitAll()
         ;
     }
 

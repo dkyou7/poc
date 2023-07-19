@@ -26,6 +26,8 @@ public class Member {
 
     private String password;
 
+    private String scale;
+
     @Enumerated(EnumType.STRING)
     private Role role;
 

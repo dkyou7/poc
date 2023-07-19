@@ -42,4 +42,15 @@ public class MemberService implements UserDetailsService {
                 .password(member.getPassword())
                 .roles(member.getRole().toString()).build();
     }
+
+    public void process_updateScale(String email, String scale) {
+        Member byEmail = memberRepository.findByEmail(email);
+        byEmail.setScale(scale);
+        System.out.println("byEmail.getScale() = " + byEmail.getScale());
+    }
+
+    public String findScaleByEmail(String email) {
+        Member byEmail = memberRepository.findByEmail(email);
+        return byEmail.getScale();
+    }
 }

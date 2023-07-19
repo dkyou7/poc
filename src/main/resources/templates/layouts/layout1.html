@@ -13,19 +13,118 @@
 
 
     <!-- JS, Popper.js, and jQuery -->
-    <script src="https://code.jquery.com/jquery-3.7.0.slim.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-    <th:block layout:fragment="script"></th:block>
-    <th:block layout:fragment="css"></th:block>
+    <th:block layout:fragment="script"/>
+    <th:block layout:fragment="css"/>
 
+    <script>
+        var scale = 1;
+
+        function scaleUpdate(value){
+            console.log('scale up : '+value);
+
+            // Ajax POST 요청
+            $.ajax({
+                type: "POST",
+                url: "/scale/update",
+                data: {
+                    scale : value
+                },
+                success: function(response) {
+                    // 성공적인 응답 처리
+                    console.log(response);
+                },
+                error: function(xhr, status, error) {
+                    // 오류 응답 처리
+                    console.error(xhr.responseText);
+                }
+            });
+        }
+
+        function zoomIn() {
+            scale *= 1.1;
+            var value = zoom();
+            scaleUpdate(value);
+
+        }
+
+        function zoomOut() {
+            scale /= 1.1;
+            var value = zoom();
+            scaleUpdate(value);
+        }
+
+        function zoomInit(){
+            scale = 1;
+            var value = zoom();
+            scaleUpdate(value);
+        }
+
+        function scaleLoad(){
+            // Ajax POST 요청
+            console.log('언제 로드되는걸까?');
+            $.ajax({
+                type: "POST",
+                url: "/scale/load",
+                data: {},
+                success: function(data) {
+                    // 성공적인 응답 처리
+                    console.log('로드 성공');
+                    console.log(data.scale);
+                    zoomLoad(data.scale);
+                    scale = data.scale;
+                },
+                error: function(xhr, status, error) {
+                    // 오류 응답 처리
+                    console.error(xhr.responseText);
+                }
+            });
+        }
+
+        function zoom() {
+            const viewer = Math.ceil((scale * 100) % 1000);
+            const content = document.getElementById("content");
+            content.style.zoom = scale;
+
+            content.style.webkitTransform = 'scale('+scale+')';  // Webkit
+            content.style.webkitTransformOrigin = '0 0';
+            content.style.MozTransform = 'scale('+scale+')';  // Mozilla(firefox)
+            content.style.MozTransformOrigin = '0 0';
+            content.style.OTransform = 'scale('+scale+')';  // Opera
+            content.style.OTransformOrigin = '0 0';
+
+            const scaleViewer = document.getElementById("scaleViewer");
+            scaleViewer.innerHTML =  viewer + '%';
+            return scale;
+        }
+        function zoomLoad(scale) {
+            const viewer = Math.ceil((scale * 100) % 1000);
+            const content = document.getElementById("content");
+            content.style.zoom = scale;
+
+            content.style.webkitTransform = 'scale('+scale+')';  // Webkit
+            content.style.webkitTransformOrigin = '0 0';
+            content.style.MozTransform = 'scale('+scale+')';  // Mozilla(firefox)
+            content.style.MozTransformOrigin = '0 0';
+            content.style.OTransform = 'scale('+scale+')';  // Opera
+            content.style.OTransformOrigin = '0 0';
+
+            const scaleViewer = document.getElementById("scaleViewer");
+            scaleViewer.innerHTML =  viewer + '%';
+            return viewer;
+        }
+
+        window.onload = scaleLoad();
+    </script>
 </head>
 <body id="page-top">
 <div th:replace="fragments/header::header"></div>
 <div class="row">
     <div th:replace="fragments/sidebar::sidebar"></div>
-    <div layout:fragment="content" class="col-10 container pr-5"></div>
+    <div layout:fragment="content" id="content" class="col-10 container pr-5"></div>
 </div>
 <div th:replace="fragments/footer::footer"></div>
 
